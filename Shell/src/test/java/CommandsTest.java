@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 public class CommandsTest {
     @Test
-    void testEcho() {
+    public void testEcho() {
         Command echo = new Echo();
         List<String> tokens = new ArrayList<String>();
         String[] expectedArray = {"aa", "bb", "cc  dd", "ee"};
@@ -25,13 +25,12 @@ public class CommandsTest {
         }
     }
     @Test
-    void testWc() {
+    public void testWc() {
         Command wc = new Wc();
         List<String> lines = new ArrayList<String>();
         String[] linesArray = {"aa bb 7", "ccc rr tttt"};
         Collections.addAll(lines, linesArray);
         try {
-            System.out.println(wc.pipedExecute(lines));
             assertEquals("2 6 18", wc.pipedExecute(lines).get(0));
         } catch (ExitException e) {
             fail();

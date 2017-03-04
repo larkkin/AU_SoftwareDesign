@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TokenizerTest {
     @Test
-    void testWeakQuoting() {
+    public void testWeakQuoting() {
         Context context = new Context();
         String[] expectedArray = {"aa", "bb", "cc dd", "ee"};
         List<String> expectedTokens = new ArrayList<String>();
@@ -30,7 +30,7 @@ public class TokenizerTest {
         }
     }
     @Test
-    void testContextVariable() {
+    public void testContextVariable() {
         Context context = new Context();
         String[] expectedArray = {"a2", "2", "a"};
         List<String> expectedTokens = new ArrayList<String>();
@@ -51,7 +51,7 @@ public class TokenizerTest {
         }
     }
     @Test
-    void testStrongQuoting() {
+    public void testStrongQuoting() {
         Context context = new Context();
         String[] expectedArray = {"aa", "b2 cc", "dd"};
         List<String> expectedTokens = new ArrayList<String>();
@@ -64,7 +64,7 @@ public class TokenizerTest {
         }
     }
     @Test
-    void testPipe() {
+    public void testPipe() {
         Context context = new Context();
         ArrayList<ArrayList<String>> expectedTokensList = new  ArrayList<ArrayList<String>>();
         expectedTokensList.add(new ArrayList<String>());
