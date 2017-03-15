@@ -2,9 +2,13 @@ package ru.spbau.mit.lara;
 
 import java.util.HashMap;
 import java.util.Map;
+
 /**
- * Created by lara on 26.02.17.
+ * the class has three methods in it: adding to context,
+ * providing information about the variable, and
+ * providing the value itself
  */
+
 public class Context {
     /**
      * the class has the map of the variables that we have in current contexts.
@@ -12,16 +16,16 @@ public class Context {
      */
     private HashMap<String, String> variableStorage = new HashMap();
 
-    public void addToContext(String variableName, String variableValue) {
+    void addToContext(String variableName, String variableValue) {
         variableStorage.put(variableName, variableValue);
     }
 
 
-    public String getValue(String variableName) {
+    String getValue(String variableName) {
         return variableStorage.get(variableName);
     }
 
-    public boolean search(String variableName) {
+    boolean contains(String variableName) {
         return variableStorage.containsKey(variableName);
     }
 

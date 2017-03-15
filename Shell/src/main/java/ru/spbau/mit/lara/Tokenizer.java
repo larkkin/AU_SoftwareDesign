@@ -4,24 +4,26 @@ import ru.spbau.mit.lara.exceptions.ContextException;
 import ru.spbau.mit.lara.exceptions.WrongInputFormatException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Created by lara on 25.02.17.
+ * the class for parsing the line shell is redirecting to us
+ * we parse the line and divide it into atomic structures:
+ * command names and arguments
  */
-public class Tokenizer {
 
-    public static ArrayList<ArrayList<String>> Tokenize(
-            /**
-             * we execute the tokenizing if a given inputString: the result is the lists of the lists
-             * this also helps us to divide tokens per commands(in the "pipe" case)
-             */
+class Tokenizer {
+    /**
+     * we execute the tokenizing if a given inputString: the result is the lists of the lists
+     * this also helps us to divide tokens per commands(in the "pipe" case)
+     */
+    static List<ArrayList<String>> Tokenize(
             String inputLine,
             Context contextInstance) throws WrongInputFormatException, ContextException {
         ArrayList<String> preTokens = new ArrayList<String>();
         String[] preTokensArray = inputLine.split("\\|");
-        for (String s : preTokensArray) {
-            preTokens.add(s);
-        }
+        Collections.addAll(preTokens, preTokensArray);
         ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
         for (String preToken : preTokens) {
             result.add(TokenizeWithoutPipes(preToken, contextInstance));
@@ -29,28 +31,24 @@ public class Tokenizer {
         return result;
     }
 
+    /**
+     * here we can deal with a list of tokens, because we don't have to divide tokens by command
+     */
     private static ArrayList<String> TokenizeWithoutPipes(
-            /**
-             * here we can deal with a list of tokens, because we don't have to divide tokens by command
-             */
             String inputLine,
             Context contextInstance) throws WrongInputFormatException, ContextException {
         ArrayList<String> tokens = new ArrayList<String>();
         String currentToken = new String();
         for (int i = 0; i < inputLine.length(); i++) {
             if (inputLine.charAt(i) == '\'') {
-                /**
-                 * the weak quoting case
-                 */
+                // the weak quoting case
                 String weakQuotizedPreToken = extractWeakQuotizedTokenPreToken(inputLine, i);
                 currentToken += weakQuotizedPreToken;
                 i += weakQuotizedPreToken.length() + 1;
                 continue;
             }
             if (inputLine.charAt(i) == '\"') {
-                /**
-                 * the strong quoting case
-                 */
+                // the strong quoting case
                 String strongQuotizedToken = extractStrongQuotizedTokenPreToken(inputLine, i, contextInstance);
                 currentToken += strongQuotizedToken;
                 do {
@@ -59,18 +57,20 @@ public class Tokenizer {
                 continue;
             }
             if (inputLine.charAt(i) == '$')  {
-                /**
-                 * when we need to extract the values from the context of the current instance of shell
-                 */
+                // when we need to extract the values from the context of the current instance of shell
                 String contextVariable = extractContextVariable(inputLine, i, contextInstance);
                 currentToken += contextVariable;
-                i += contextVariable.length();
+                while (i < inputLine.length() &&
+                        inputLine.charAt(i) != ' ' &&
+                        inputLine.charAt(i) != '\"' &&
+                        inputLine.charAt(i) != '\'') {
+                    i++;
+                }
+                i--;
                 continue;
             }
             if (inputLine.charAt(i) == ' ') {
-                /**
-                 * thus we see when the end of the token we are formating is located
-                 */
+                // thus we see when the end of the token we are formating is located
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken);
                     currentToken = new String();
@@ -78,16 +78,14 @@ public class Tokenizer {
                 continue;
             }
             if (inputLine.charAt(i) == '=' && tokens.size() == 0) {
-                /**
-                 * when we see the '=', we have to add values to context
-                 */
+                // when we see the '=', we have to add values to context
                 String variableKey = currentToken;
                 String variableVal = new String();
                 i++;
-                while ( i < inputLine.length() &&
-                        inputLine.charAt(i) != ' ' &&
-                        inputLine.charAt(i) != '\"' &&
-                        inputLine.charAt(i) != '\'') {
+                while ( i < inputLine.length()
+                        && inputLine.charAt(i) != ' '
+                        && inputLine.charAt(i) != '\"'
+                        && inputLine.charAt(i) != '\'') {
                     variableVal +=  inputLine.charAt(i);
                     i++;
                 }
@@ -102,40 +100,40 @@ public class Tokenizer {
         }
         return tokens;
     }
+
+    /**
+     * the helper function to extract the context variable: we also have to obtain the variable name correctly
+     * (to go back in the String we are provided with)
+     */
     private static String extractContextVariable(
-            /**
-             * the helper function to extract the context variable: we also have to obtain the variable name correctly
-             * (to go back in the String we are provided with)
-             */
             String inputLine,
             int i,
             Context contextInstance) throws ContextException {
         i++;
         String variableName = new String();
-        while (i < inputLine.length() &&
-                inputLine.charAt(i) != ' ' &&
-                inputLine.charAt(i) != '\"' &&
-                inputLine.charAt(i) != '\'') {
+        while (i < inputLine.length()
+                && inputLine.charAt(i) != ' '
+                && inputLine.charAt(i) != '\"'
+                && inputLine.charAt(i) != '\'') {
             variableName = variableName + inputLine.charAt(i);
             i++;
         }
-        if (contextInstance.search(variableName)) {
+        if (contextInstance.contains(variableName)) {
             return contextInstance.getValue(variableName);
         } else {
             throw new ContextException();
         }
     }
+
     private static String extractStrongQuotizedTokenPreToken(
             String inputLine,
             int i,
             Context contextInstance) throws  WrongInputFormatException, ContextException {
-        /**
-         * it is also the helper function in order to make the function "tokenize" more consize
-         */
+        // it is also the helper function in order to make the function "tokenize" more consize
         i++;
         String quotizedToken = new String();
-        while (i < inputLine.length() &&
-               inputLine.charAt(i) != '\"') {
+        while (i < inputLine.length()
+               && inputLine.charAt(i) != '\"') {
             if (inputLine.charAt(i) == '$')  {
                 String contextVariable = extractContextVariable(inputLine, i, contextInstance);
                 quotizedToken += contextVariable;
@@ -150,16 +148,17 @@ public class Tokenizer {
         }
         return quotizedToken;
     }
+
+    /**
+     * to avoid the collisions like 'aaa bbb' - as it should be treated as one tokenPreToken
+     */
     private static String extractWeakQuotizedTokenPreToken(
-            /**
-             * to avoid the collisions like 'aaa bbb' - as it should be treated as one tokenPreToken
-             */
             String inputLine,
             int i) throws WrongInputFormatException {
         String weakQuotizedToken = new String();
         i++;
-        while (i < inputLine.length() &&
-               inputLine.charAt(i) != '\'') {
+        while (i < inputLine.length()
+               && inputLine.charAt(i) != '\'') {
             weakQuotizedToken += inputLine.charAt(i);
             i++;
         }

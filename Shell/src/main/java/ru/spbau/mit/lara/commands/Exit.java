@@ -4,6 +4,9 @@ import ru.spbau.mit.lara.exceptions.ExitException;
 
 import java.util.List;
 
+/**
+ * the exit command throws the exception and thus the application is shut down
+ */
 
 public class Exit implements Command {
     public String execute(List<String> tokens) throws ExitException {
@@ -13,6 +16,3 @@ public class Exit implements Command {
         throw new ExitException();
     }
 }
-/**
- * the exit command throws the exception and thus the application is shut down
- */

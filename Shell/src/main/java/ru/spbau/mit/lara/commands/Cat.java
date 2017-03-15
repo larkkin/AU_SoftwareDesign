@@ -11,45 +11,36 @@ import java.util.List;
 
 /**
  * this command is to display the contents of the file
+ * as all the commands, it implements the Command interface
  *
  */
-
 public class Cat implements Command {
     public String execute(List<String> tokens) throws ExitException {
+        // currently only the one token per command cat is supported
         if (tokens.size() > 1) {
             throw new ShellRuntimeException();
         }
-        /**
-         * currently only the one token per command cat is supported
-         */
         StringBuilder result = new StringBuilder();
-        BufferedReader br;
-        try {
-            br = new BufferedReader(new FileReader(tokens.get(0)));
-        } catch (FileNotFoundException e) {
-            System.out.println("file not found");
-            /**
-             * the message that is shown to the user when the file cannot be found
-             */
-            return "";
-        }
-        try {
-            String line = br.readLine();
-            while (line != null) {
-                result.append(line);
-                result.append("\n");
-                line = br.readLine();
+        // we finish working with file and close it by using try with resources
+        try (BufferedReader br = new BufferedReader(new FileReader(tokens.get(0)))) {
+              String line = br.readLine();
+              while (line != null) {
+                  result.append(line);
+                  result.append("\n");
+                  line = br.readLine();
+              }
             }
-            br.close();
-            /**
-             * we finish working with file and close it
-             */
-        } catch(IOException e) {
-            System.out.println("some other trouble");
-            return "";
+        // the message that is shown to the user when the file cannot be found
+        catch (FileNotFoundException e) {
+              System.out.println("file not found");
+              return "";
         }
-        return result.toString();
-    }
+        catch (IOException e) {
+                System.out.println("some other trouble");
+                return "";
+            }
+            return result.toString();
+        }
 
     public List<String> pipedExecute(List<String> lines) throws ExitException {
         return lines;
