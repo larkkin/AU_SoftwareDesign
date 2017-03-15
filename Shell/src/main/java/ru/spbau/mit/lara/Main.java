@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 /**
  * the starting point
  */
+
 public class Main {
     public static void main(String[] args) {
 

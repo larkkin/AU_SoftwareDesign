@@ -135,14 +135,14 @@ class Shell {
      */
     public void processLine(
             String inputLine) throws ShellException, ExitException {
-        List<ArrayList<String>> tokens_list = Tokenizer.Tokenize(inputLine, context);
-        if (tokens_list.size() == 1 && tokens_list.get(0).size() > 0) {
-            ArrayList<String> tokens = tokens_list.get(0);
+        List<ArrayList<String>> tokensList = Tokenizer.Tokenize(inputLine, context);
+        if (tokensList.size() == 1 && tokensList.get(0).size() > 0) {
+            ArrayList<String> tokens = tokensList.get(0);
             String commandName = tokens.get(0);
             executeCommand(commandName, tokens.subList(1, tokens.size()));
         }
-        if (tokens_list.size() > 1) {
-            executePipeline(tokens_list);
+        if (tokensList.size() > 1) {
+            executePipeline(tokensList);
         }
     }
 
