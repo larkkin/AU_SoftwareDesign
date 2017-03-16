@@ -27,7 +27,7 @@ class Shell {
     Shell() {
         context = new Context();
         commandStorage = new HashMap();
-        /**
+        /*
          * we put the commands avaliable by now in the commandStorage: the list can be enlarged.
          */
         commandStorage.put("echo", new Echo());
@@ -133,7 +133,7 @@ class Shell {
     /**
      * the main shell method. we arrive here when the input line is written in Main class
      */
-    public void processLine(
+    void processLine(
             String inputLine) throws ShellException, ExitException {
         List<ArrayList<String>> tokensList = Tokenizer.Tokenize(inputLine, context);
         if (tokensList.size() == 1 && tokensList.get(0).size() > 0) {

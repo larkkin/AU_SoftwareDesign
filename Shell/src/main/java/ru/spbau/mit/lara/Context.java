@@ -8,7 +8,6 @@ import java.util.Map;
  * providing information about the variable, and
  * providing the value itself
  */
-
 public class Context {
     /**
      * the class has the map of the variables that we have in current contexts.

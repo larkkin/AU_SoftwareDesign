@@ -12,7 +12,6 @@ import java.util.List;
  * we parse the line and divide it into atomic structures:
  * command names and arguments
  */
-
 class Tokenizer {
     /**
      * we execute the tokenizing if a given inputString: the result is the lists of the lists
@@ -21,10 +20,10 @@ class Tokenizer {
     static List<ArrayList<String>> Tokenize(
             String inputLine,
             Context contextInstance) throws WrongInputFormatException, ContextException {
-        ArrayList<String> preTokens = new ArrayList<String>();
+        List<String> preTokens = new ArrayList<String>();
         String[] preTokensArray = inputLine.split("\\|");
         Collections.addAll(preTokens, preTokensArray);
-        ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+        List<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
         for (String preToken : preTokens) {
             result.add(TokenizeWithoutPipes(preToken, contextInstance));
         }
@@ -60,10 +59,10 @@ class Tokenizer {
                 // when we need to extract the values from the context of the current instance of shell
                 String contextVariable = extractContextVariable(inputLine, i, contextInstance);
                 currentToken += contextVariable;
-                while (i < inputLine.length() &&
-                        inputLine.charAt(i) != ' ' &&
-                        inputLine.charAt(i) != '\"' &&
-                        inputLine.charAt(i) != '\'') {
+                while (i < inputLine.length()
+                        && inputLine.charAt(i) != ' '
+                        && inputLine.charAt(i) != '\"'
+                        && inputLine.charAt(i) != '\'') {
                     i++;
                 }
                 i--;

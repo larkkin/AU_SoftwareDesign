@@ -9,14 +9,11 @@ import java.io.InputStreamReader;
 /**
  * the starting point
  */
-
 public class Main {
     public static void main(String[] args) {
 
         Shell shellInstance = new Shell();
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
                 // we show the invitation to write the command
                 System.out.print("«");
