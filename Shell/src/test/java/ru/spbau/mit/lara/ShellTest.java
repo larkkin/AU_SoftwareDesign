@@ -97,6 +97,27 @@ public class ShellTest {
         // no pipedExecute for external commands
     }
 
+    @Test
+    public void testGrep() throws ExitException, ShellException {
+        // execute
+        shell.processLine("grep \'grapes\' src/test/resources/text_for_tests.txt");
+        assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
+        resetStreams();
+        // no -i key
+        shell.processLine("grep \'Grapes\' src/test/resources/text_for_tests.txt");
+        assertEquals("\n", outContent.toString());
+        resetStreams();
+        // -w key
+        shell.processLine("grep -w \'grapes\' src/test/resources/text_for_tests.txt");
+        assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
+        resetStreams();
+        // no -w key
+        shell.processLine("grep -w \'grape\' src/test/resources/text_for_tests.txt");
+        assertEquals("\n", outContent.toString());
+        resetStreams();
+        // no pipedExecute for grep
+    }
+
     private void resetStreams() {
         outContent.reset();
         errContent.reset();

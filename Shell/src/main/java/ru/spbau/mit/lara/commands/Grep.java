@@ -74,7 +74,7 @@ public class Grep implements Command {
         String fileNameStr = args[1];
         Pattern pattern = null;
         if (commandLine.hasOption("w")) {
-            patternStr = "\\s" + patternStr + "\\s";
+            patternStr = "(^| |\\t)" + patternStr + "( |\\t|$|\\n|\\.|\\?|!|,)";
         }
         if (commandLine.hasOption("i")) {
             pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
