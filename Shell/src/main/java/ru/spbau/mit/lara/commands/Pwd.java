@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * we ask the system to provide the essential information
+ * We ask the system to provide the essential information
  */
-
 public class Pwd implements Command {
     public String execute(List<String> tokens) throws ExitException {
         return System.getProperty("user.dir");

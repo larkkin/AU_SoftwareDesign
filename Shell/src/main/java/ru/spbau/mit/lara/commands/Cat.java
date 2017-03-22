@@ -10,18 +10,17 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * this command is to display the contents of the file
+ * This command is to display the contents of the file
  * as all the commands, it implements the Command interface
- *
  */
 public class Cat implements Command {
     public String execute(List<String> tokens) throws ExitException {
-        // currently only the one token per command cat is supported
+        // Currently only the one token per command cat is supported
         if (tokens.size() > 1) {
             throw new ShellRuntimeException();
         }
         StringBuilder result = new StringBuilder();
-        // we finish working with file and close it by using try with resources
+        // We finish working with file and close it by using try with resources
         try (BufferedReader br = new BufferedReader(new FileReader(tokens.get(0)))) {
               String line = br.readLine();
               while (line != null) {
@@ -30,7 +29,7 @@ public class Cat implements Command {
                   line = br.readLine();
               }
             }
-        // the message that is shown to the user when the file cannot be found
+        // The message that is shown to the user when the file cannot be found
         catch (FileNotFoundException e) {
               System.out.println("file not found");
               return "";

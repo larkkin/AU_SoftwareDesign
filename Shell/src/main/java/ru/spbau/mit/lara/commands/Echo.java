@@ -5,7 +5,7 @@ import ru.spbau.mit.lara.exceptions.ExitException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** displays the content that we are giving to it
+/** Displays the content that we are giving to it
  *  has two variants: piped and non-piped, as all the commands do
  */
 public class Echo implements Command {
@@ -19,12 +19,12 @@ public class Echo implements Command {
             result.append(' ');
             result.append(tokens.get(i));
         }
-        // tokens are shown separated by whitespace
+        // Tokens are shown separated by whitespace
         return result.toString();
     }
 
     public List<String> pipedExecute(List<String> lines) throws ExitException {
         return new ArrayList<String>();
     }
-    // to versions of echo command. Can be used to echo the values of several variables simultaneously
+    // To versions of echo command. Can be used to echo the values of several variables simultaneously
 }

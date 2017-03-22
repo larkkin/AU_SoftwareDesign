@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * command for counting stats for given file:
+ * Command for counting stats for given file:
  * number of lines, words and bytes
  */
 public class Wc implements Command {
@@ -30,8 +30,13 @@ public class Wc implements Command {
             String line = br.readLine();
             while (line != null) {
                 linesCount++;
-                wordsCount += line.split(" ").length;
-                bytesCount += line.getBytes().length;
+                String[] arr = line.split(" ");
+                for (String s : arr) {
+                    if (s.length() > 0) {
+                        wordsCount++;
+                    }
+                }
+                bytesCount += line.getBytes().length + 1;
                 line = br.readLine();
             }
         }
@@ -56,11 +61,16 @@ public class Wc implements Command {
         int linesCount = 0;
         int wordsCount = 0;
         int bytesCount = 0;
-        
+
         for (String line : lines) {
             linesCount++;
-            wordsCount += line.split(" ").length;
-            bytesCount += line.getBytes().length;
+            String[] arr = line.split(" ");
+            for (String s : arr) {
+                if (s.length() > 0) {
+                    wordsCount++;
+                }
+            }
+            bytesCount += line.getBytes().length + 1;
         }
         sb.append(linesCount);
         sb.append(" ");

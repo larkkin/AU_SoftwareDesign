@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * the starting point
+ * The starting point
  */
 public class Main {
     public static void main(String[] args) {
@@ -15,13 +15,13 @@ public class Main {
         Shell shellInstance = new Shell();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
-                // we show the invitation to write the command
+                // We show the invitation to write the command
                 System.out.print("«");
                 String inputLine = br.readLine();
                 try {
                     shellInstance.processLine(inputLine);
                 } catch (ShellException e) {
-                    // if the result of processing the line is negative
+                    // If the result of processing the line is negative
                     System.out.println("wrong string format =(\n\tplease, try again");
                 } catch (ExitException e) {
                     break;

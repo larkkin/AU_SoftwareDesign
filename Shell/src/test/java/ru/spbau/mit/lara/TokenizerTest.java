@@ -1,6 +1,5 @@
-package ru.spbau.mit.lara; /**
- * Created by lara on 04.03.17.
- */
+package ru.spbau.mit.lara;
+
 import org.junit.Test;
 import ru.spbau.mit.lara.exceptions.ContextException;
 import ru.spbau.mit.lara.exceptions.ShellException;

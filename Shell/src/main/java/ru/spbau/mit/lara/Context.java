@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * the class has three methods in it: adding to context,
+ * The class has three methods in it: adding to context,
  * providing information about the variable, and
  * providing the value itself
  */
-public class Context {
+class Context {
     /**
-     * the class has the map of the variables that we have in current contexts.
+     * The class has the map of the variables that we have in current contexts.
      * Allows to deal with data easily
      */
     private HashMap<String, String> variableStorage = new HashMap();

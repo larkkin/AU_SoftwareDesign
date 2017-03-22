@@ -22,13 +22,13 @@ class Shell {
     private HashMap<String, Command> commandStorage;
 
     /**
-     * initiating the fields
+     * Initiating the fields
      */
     Shell() {
         context = new Context();
         commandStorage = new HashMap();
         /*
-         * we put the commands avaliable by now in the commandStorage: the list can be enlarged.
+         * We put the commands avaliable by now in the commandStorage: the list can be enlarged.
          */
         commandStorage.put("echo", new Echo());
         commandStorage.put("cat", new Cat());
@@ -38,11 +38,10 @@ class Shell {
     }
 
     /**
-     * we resort to running External Command when we cannot find the necessary one in our commandStorage
+     * We resort to running External Command when we cannot find the necessary one in our commandStorage
      * and return the result as the string for the sameness
      */
-    private static String runExternalCommand(
-            String[] tokens) throws IOException {
+    private static String runExternalCommand(String[] tokens) throws IOException {
 
         Process process = new ProcessBuilder(tokens).start();
         BufferedReader br = new BufferedReader(
@@ -59,10 +58,9 @@ class Shell {
     }
 
     /**
-     * this function is written to avoid the duplicated code
+     * This function is written to avoid the duplicated code
      */
     private static String[] getArrayFromStringAndList(String str, List<String> lst) {
-
         String[] arr = new String[1 + lst.size()];
         arr[0] = str;
         for (int i = 0; i < lst.size(); i++) {
@@ -72,11 +70,9 @@ class Shell {
     }
 
     /**
-     * if we are given the command without the pipe and simply execute it
+     * If we are given the command without the pipe and simply execute it
      */
-    private void executeCommand(String commandName,
-                                List<String> arguments) throws ExitException {
-
+    private void executeCommand(String commandName, List<String> arguments) throws ExitException {
         if (commandStorage.containsKey(commandName)) {
             System.out.println(commandStorage.get(commandName).execute(arguments));
         }
@@ -92,11 +88,9 @@ class Shell {
     }
 
     /**
-     * firstly, we execute the first command, than we pass the results to the next commands in a row
-     * @param tokensList
+     * Firstly, we execute the first command, than we pass the results to the next commands in a row
      */
-    private void executePipeline(
-            List<ArrayList<String>> tokensList) throws ExitException {
+    private void executePipeline(List<ArrayList<String>> tokensList) throws ExitException {
         ArrayList<String> tokens = tokensList.get(0);
         String commandName = tokens.get(0);
         List<String> arguments = tokens.subList(1, tokens.size());
@@ -109,8 +103,8 @@ class Shell {
         } else {
             try {
                 String[] argsArray = getArrayFromStringAndList(commandName, arguments);
-                String[] lines_array = runExternalCommand(argsArray).split("\\n");
-                Collections.addAll(message, lines_array);
+                String[] linesArray = runExternalCommand(argsArray).split("\\n");
+                Collections.addAll(message, linesArray);
             } catch (IOException e) {
                 message.clear();
             }
@@ -131,10 +125,9 @@ class Shell {
     }
 
     /**
-     * the main shell method. we arrive here when the input line is written in Main class
+     * The main shell method. we arrive here when the input line is written in Main class
      */
-    void processLine(
-            String inputLine) throws ShellException, ExitException {
+    void processLine(String inputLine) throws ShellException, ExitException {
         List<ArrayList<String>> tokensList = Tokenizer.Tokenize(inputLine, context);
         if (tokensList.size() == 1 && tokensList.get(0).size() > 0) {
             ArrayList<String> tokens = tokensList.get(0);
