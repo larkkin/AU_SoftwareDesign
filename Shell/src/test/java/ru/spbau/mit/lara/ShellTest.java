@@ -3,19 +3,12 @@ package ru.spbau.mit.lara;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.spbau.mit.lara.commands.Command;
-import ru.spbau.mit.lara.commands.Echo;
-import ru.spbau.mit.lara.commands.Wc;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 public class ShellTest {

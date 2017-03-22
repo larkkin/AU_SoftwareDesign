@@ -35,6 +35,7 @@ class Shell {
         commandStorage.put("exit", new Exit());
         commandStorage.put("pwd", new Pwd());
         commandStorage.put("wc", new Wc());
+        commandStorage.put("grep", new Grep());
     }
 
     /**
