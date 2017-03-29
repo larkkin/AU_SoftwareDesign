@@ -36,6 +36,8 @@ class Shell {
         commandStorage.put("pwd", new Pwd());
         commandStorage.put("wc", new Wc());
         commandStorage.put("grep", new Grep());
+        commandStorage.put("cd", new Cd());
+        commandStorage.put("ls", new Ls());
     }
 
     /**

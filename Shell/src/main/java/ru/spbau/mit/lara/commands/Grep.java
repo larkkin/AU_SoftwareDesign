@@ -6,6 +6,7 @@ import ru.spbau.mit.lara.exceptions.GrepException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ public class Grep implements Command {
             return "wrong grep options format";
         }
         StringBuilder result = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileNameStr))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(fileNameStr).getAbsoluteFile()))) {
             String line = br.readLine();
             while (line != null) {
                 if (pattern.matcher(line).find()) {

@@ -3,10 +3,7 @@ package ru.spbau.mit.lara.commands;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -21,7 +18,7 @@ public class Cat implements Command {
         }
         StringBuilder result = new StringBuilder();
         // We finish working with file and close it by using try with resources
-        try (BufferedReader br = new BufferedReader(new FileReader(tokens.get(0)))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(tokens.get(0)).getAbsoluteFile()))) {
               String line = br.readLine();
               while (line != null) {
                   result.append(line);

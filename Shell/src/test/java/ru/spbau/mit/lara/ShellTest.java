@@ -2,12 +2,13 @@ package ru.spbau.mit.lara;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,17 +16,20 @@ public class ShellTest {
     private final Shell shell = new Shell();
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private String currentDir;
 
     @Before
     public void setUpStreams() {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+        currentDir = System.getProperty("user.dir");
     }
 
     @After
     public void cleanUpStreams() {
         System.setOut(null);
         System.setErr(null);
+        System.setProperty("user.dir", currentDir);
     }
 
     @Test
@@ -88,16 +92,6 @@ public class ShellTest {
     }
 
     @Test
-    public void testExternalLS() throws ExitException, ShellException {
-        // execute
-        shell.processLine("ls src");
-        assertEquals("main\n" +
-                "test\n\n", outContent.toString());
-        resetStreams();
-        // no pipedExecute for external commands
-    }
-
-    @Test
     public void testGrep() throws ExitException, ShellException {
         // execute
         shell.processLine("grep \'grapes\' src/test/resources/text_for_tests.txt");
@@ -118,11 +112,39 @@ public class ShellTest {
         // no pipedExecute for grep
     }
 
+    @Test
+    public void testCd() throws IOException, ShellException, ExitException {
+        TemporaryFolder folder = new TemporaryFolder();
+        folder.create();
+        File file = folder.newFile("test.txt");
+        String testData = "test-data";
+        try (PrintWriter pw = new PrintWriter(file)) {
+            pw.println(testData);
+        }
+
+        shell.processLine("cd " + folder.getRoot().getAbsolutePath());
+        resetStreams();
+        shell.processLine("cat test.txt");
+        assertEquals(testData + "\n\n", outContent.toString());
+        resetStreams();
+    }
+
+    @Test
+    public void testLs() throws IOException, ShellException, ExitException {
+        TemporaryFolder folder = new TemporaryFolder();
+        folder.create();
+        folder.newFile("test-file.txt");
+        folder.newFolder("test-folder");
+        shell.processLine("ls " + folder.getRoot().getAbsolutePath());
+        assertEquals("test-folder\ntest-file.txt\n\n", outContent.toString());
+        shell.processLine("cd " + folder.getRoot().getAbsolutePath());
+        resetStreams();
+        shell.processLine("ls");
+        assertEquals("test-folder\ntest-file.txt\n\n", outContent.toString());
+    }
+
     private void resetStreams() {
         outContent.reset();
         errContent.reset();
     }
-
-
-
 }
