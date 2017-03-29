@@ -97,10 +97,10 @@ class Shell {
         List<String> arguments = tokens.subList(1, tokens.size());
         List<String> message = new ArrayList<String>();
         if (commandStorage.containsKey(commandName)) {
-            String[] lines_array = commandStorage.get(commandName)
+            String[] linesArray = commandStorage.get(commandName)
                     .execute(arguments)
                     .split("\\n");
-            Collections.addAll(message, lines_array);
+            Collections.addAll(message, linesArray);
         } else {
             try {
                 String[] argsArray = getArrayFromStringAndList(commandName, arguments);
