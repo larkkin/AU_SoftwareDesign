@@ -1,6 +1,7 @@
 package ru.spbau.mit.lara.commands;
 
 import ru.spbau.mit.lara.exceptions.ExitException;
+import ru.spbau.mit.lara.exceptions.ContinueException;
 
 import java.util.List;
 
@@ -25,6 +26,6 @@ public interface Command {
      * @return same as the execute method but now lines are
      *         stored in the list
      */
-    List<String> pipedExecute(List<String> lines) throws ExitException;
+    List<String> pipedExecute(List<String> lines) throws ExitException, ContinueException;
 }
 

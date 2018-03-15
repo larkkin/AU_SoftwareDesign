@@ -1,4 +1,5 @@
 package ru.spbau.mit.lara;
+import ru.spbau.mit.lara.exceptions.ContinueException;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 
@@ -23,6 +24,8 @@ public class Main {
                 } catch (ShellException e) {
                     // If the result of processing the line is negative
                     System.out.println("wrong string format =(\n\tplease, try again");
+                } catch (ContinueException e) {
+                    System.out.println("there's no piped version of grep");
                 } catch (ExitException e) {
                     break;
                 }

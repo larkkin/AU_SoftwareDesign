@@ -58,4 +58,4 @@ a=7
 echo $a
 
 IS IT BASH?
-No. The functionality is to be enlarged(the release of the grep command is coming soon). Pipes are not lazy. 
+No. The functionality is to be enlarged(the release of the grep command is done, and later changes are to be pushed). Pipes are not lazy. 

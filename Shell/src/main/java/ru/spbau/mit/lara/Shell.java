@@ -1,6 +1,7 @@
 package ru.spbau.mit.lara;
 
 import ru.spbau.mit.lara.commands.*;
+import ru.spbau.mit.lara.exceptions.ContinueException;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
@@ -91,7 +92,7 @@ class Shell {
     /**
      * Firstly, we execute the first command, than we pass the results to the next commands in a row
      */
-    private void executePipeline(List<ArrayList<String>> tokensList) throws ExitException {
+    private void executePipeline(List<ArrayList<String>> tokensList) throws ExitException, ContinueException {
         ArrayList<String> tokens = tokensList.get(0);
         String commandName = tokens.get(0);
         List<String> arguments = tokens.subList(1, tokens.size());
@@ -128,7 +129,7 @@ class Shell {
     /**
      * The main shell method. we arrive here when the input line is written in Main class
      */
-    void processLine(String inputLine) throws ShellException, ExitException {
+    void processLine(String inputLine) throws ShellException, ExitException, ContinueException {
         List<ArrayList<String>> tokensList = Tokenizer.Tokenize(inputLine, context);
         if (tokensList.size() == 1 && tokensList.get(0).size() > 0) {
             ArrayList<String> tokens = tokensList.get(0);

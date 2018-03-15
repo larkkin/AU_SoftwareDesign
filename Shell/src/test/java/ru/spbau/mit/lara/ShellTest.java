@@ -3,6 +3,7 @@ package ru.spbau.mit.lara;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import ru.spbau.mit.lara.exceptions.ContinueException;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 
@@ -29,7 +30,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testEcho() throws ExitException, ShellException {
+    public void testEcho() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("echo aaa   bbb \"ccc    ddd\"");
         assertEquals("aaa bbb ccc    ddd\n", outContent.toString());
@@ -41,7 +42,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testCat() throws ExitException, ShellException {
+    public void testCat() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("cat src/test/resources/text_for_tests.txt");
         assertEquals("A duck walked up to a lemonade stand\n" +
@@ -56,7 +57,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testWc() throws ExitException, ShellException {
+    public void testWc() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("wc src/test/resources/text_for_tests.txt");
         assertEquals("4 24 115\n", outContent.toString());
@@ -68,7 +69,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testPwd() throws ExitException, ShellException {
+    public void testPwd() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("pwd");
         resetStreams();
@@ -78,7 +79,7 @@ public class ShellTest {
     }
 
     @Test(expected = ExitException.class)
-    public void testExit() throws ExitException, ShellException {
+    public void testExit() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("exit");
         resetStreams();
@@ -88,7 +89,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testExternalLS() throws ExitException, ShellException {
+    public void testExternalLS() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("ls src");
         assertEquals("main\n" +
@@ -98,7 +99,7 @@ public class ShellTest {
     }
 
     @Test
-    public void testGrep() throws ExitException, ShellException {
+    public void testGrep() throws ExitException, ShellException, ContinueException {
         // execute
         shell.processLine("grep \'grapes\' src/test/resources/text_for_tests.txt");
         assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());

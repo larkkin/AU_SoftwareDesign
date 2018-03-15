@@ -4,15 +4,20 @@ import org.apache.commons.cli.*;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.GrepException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
+import ru.spbau.mit.lara.exceptions.ContinueException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * The grep command allows to search for the pattern and has additional lines options
+ */
 public class Grep implements Command {
     private CommandLineParser argParser = new PosixParser();
     private Options options = new Options();
+
     public Grep() {
         Option ignoreCase = new Option("i", "ignorecase", false, "ignore case while parsing");
         ignoreCase.setOptionalArg(true);
@@ -26,6 +31,7 @@ public class Grep implements Command {
         options.addOption(additionalLines);
     }
 
+    @Override
     public String execute(List<String> tokens) throws ExitException {
         Pattern pattern;
         String fileNameStr;
@@ -52,9 +58,10 @@ public class Grep implements Command {
         return result.toString();
     }
 
-    public List<String> pipedExecute(List<String> lines) throws ExitException {
-        System.out.println("there's no piped version of grep");
-        throw new ShellRuntimeException();
+    @Override
+    public List<String> pipedExecute(List<String> lines) throws ContinueException {
+        //System.out.println("there's no piped version of grep");
+        throw new ContinueException();
     }
 
     private PatternAndStringPair computePattern(List<String> tokens) throws GrepException {
@@ -74,7 +81,7 @@ public class Grep implements Command {
         String fileNameStr = args[1];
         Pattern pattern = null;
         if (commandLine.hasOption("w")) {
-            patternStr = "(^| |\\t)" + patternStr + "( |\\t|$|\\n|\\.|\\?|!|,)";
+            patternStr = "(^|\\b)" + patternStr + "( |\\b|$|\\n|\\.|\\?|!|,)";
         }
         if (commandLine.hasOption("i")) {
             pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
@@ -88,9 +95,9 @@ public class Grep implements Command {
         private String str;
         private Pattern pattern;
 
-        private PatternAndStringPair(String some_str, Pattern some_pattern) {
-            str = some_str;
-            pattern = some_pattern;
+        private PatternAndStringPair(String someStr, Pattern somePattern) {
+            str = someStr;
+            pattern = somePattern;
         }
     }
 }
