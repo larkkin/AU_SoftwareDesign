@@ -3,6 +3,7 @@ package ru.spbau.mit.lara;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.notification.RunListener;
 import ru.spbau.mit.lara.commands.Command;
 import ru.spbau.mit.lara.commands.Echo;
 import ru.spbau.mit.lara.commands.Wc;
@@ -10,7 +11,9 @@ import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.ShellException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,11 +100,42 @@ public class ShellTest {
     @Test
     public void testExternalLS() throws ExitException, ShellException {
         // execute
-        shell.processLine("ls src");
+        shell.processLine("Ls src");
         assertEquals("main\n" +
                 "test\n\n", outContent.toString());
         resetStreams();
         // no pipedExecute for external commands
+    }
+
+    @Test
+    public void testLs() throws Exception
+    {
+        shell.processLine("ls");
+        String root = System.getProperty("user.dir");
+        File[] rootDir = (new File(root)).listFiles();
+        StringBuilder out = new StringBuilder();
+        for (File file: rootDir) {
+            out.append(file.toString());
+            out.append("\n");
+        }
+        out.append("\n");
+        assertEquals(out.toString(), outContent.toString());
+        resetStreams();
+    }
+
+    @Test
+    public void testCd() throws Exception
+    {
+        String root = System.getProperty("user.dir");
+     //   assertEquals("/home/nicolay/AU/sd/AU_SoftwareDesign/Shell\n", outContent.toString());
+        shell.processLine("cd /");
+        shell.processLine("pwd");
+        assertEquals("\n/\n", outContent.toString());
+        resetStreams();
+        shell.processLine("cd " + root + "/src/test");
+        shell.processLine("cat sample.txt");
+        assertEquals("\nsome text\n\n", outContent.toString());
+        resetStreams();
     }
 
     private void resetStreams() {
