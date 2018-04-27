@@ -8,6 +8,7 @@ Actually, this roguelike game is quite classy: it is a roguelike, where a girl (
 - In case the game is too easy/boring for you, you can effortlessly add new obstacles for the Girl (e.g. new bird types);
 - You can also add game levels: it can be achieved by varying Bird speed and Map difficulty (you can implement your own map generation algorithm);
 - You can also extend Girl's super powers.
+- You can overlay music (for instance, you can use music from the 'music' folder)
 
 ## Player characteristics
 
