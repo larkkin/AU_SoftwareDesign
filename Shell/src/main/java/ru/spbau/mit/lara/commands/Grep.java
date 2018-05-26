@@ -8,6 +8,7 @@ import ru.spbau.mit.lara.exceptions.ContinueException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -33,15 +34,30 @@ public class Grep implements Command {
 
     @Override
     public String execute(List<String> tokens) throws ExitException {
+        final int defaultLineSize = 200;
+
         Pattern pattern;
         String fileNameStr;
+        CommandLine commandLine = null;
         try {
-            PatternAndStringPair pair = computePattern(tokens);
+            String[] tokensArray = new String[tokens.size()];
+            tokensArray = tokens.toArray(tokensArray);
+            try {
+                commandLine = argParser.parse(options, tokensArray);
+            } catch (ParseException e) {
+                throw new GrepException(e);
+            }
+            PatternAndStringPair pair = computePattern(tokens, commandLine);
             pattern = pair.pattern;
             fileNameStr = pair.str;
         } catch (GrepException e) {
-            return "wrong grep options format";
+            if (e.hasCause()) {
+                return "wrong grep options format: " + e.getCause().toString();
+            } else {
+                return "wrong grep options format: " + e.getMessage();
+            }
         }
+
         StringBuilder result = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(fileNameStr))) {
             String line = br.readLine();
@@ -49,10 +65,22 @@ public class Grep implements Command {
                 if (pattern.matcher(line).find()) {
                     result.append(line);
                     result.append("\n");
+                    if (commandLine.hasOption('A')) {
+                        int n = Integer.parseInt(commandLine.getOptionValue('A'));
+                        br.mark(n * defaultLineSize);
+                        while (line != null && n > 0) {
+                            line = br.readLine();
+                            result.append(line);
+                            result.append("\n");
+                            n--;
+                        }
+                        br.reset();
+//                        System.out.println(n * 2);
+                    }
                 }
                 line = br.readLine();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             return "somethings's wrong with the file";
         }
         return result.toString();
@@ -64,18 +92,10 @@ public class Grep implements Command {
         throw new ContinueException();
     }
 
-    private PatternAndStringPair computePattern(List<String> tokens) throws GrepException {
-        CommandLine commandLine = null;
-        String[] tokensArray = new String[tokens.size()];
-        tokensArray = tokens.toArray(tokensArray);
-        try {
-            commandLine = argParser.parse(options, tokensArray);
-        } catch (ParseException e) {
-            throw new GrepException();
-        }
+    private PatternAndStringPair computePattern(List<String> tokens, CommandLine commandLine) throws GrepException {
         String[] args = commandLine.getArgs();
         if (args.length != 2) {
-            throw new GrepException();
+            throw new GrepException("wrong number of args, usage:\n\tgrep [-i] [-A numLines] pattern filename");
         }
         String patternStr = args[0];
         String fileNameStr = args[1];

@@ -99,24 +99,49 @@ public class ShellTest {
     }
 
     @Test
-    public void testGrep() throws ExitException, ShellException, ContinueException {
-        // execute
+    public void testGrepSimple() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep \'grapes\' src/test/resources/text_for_tests.txt");
         assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
         resetStreams();
-        // no -i key
+    }
+    @Test
+    public void testGrepIgnoreCase() throws ExitException, ShellException, ContinueException {
+        shell.processLine("grep -i \'Grapes\' src/test/resources/text_for_tests.txt");
+        assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
+        resetStreams();
         shell.processLine("grep \'Grapes\' src/test/resources/text_for_tests.txt");
         assertEquals("\n", outContent.toString());
         resetStreams();
-        // -w key
+    }
+    @Test
+    public void testGrepWord() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep -w \'grapes\' src/test/resources/text_for_tests.txt");
         assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
         resetStreams();
-        // no -w key
         shell.processLine("grep -w \'grape\' src/test/resources/text_for_tests.txt");
         assertEquals("\n", outContent.toString());
         resetStreams();
-        // no pipedExecute for grep
+    }
+    @Test
+    public void testGrepAdded() throws ExitException, ShellException, ContinueException {
+        shell.processLine("grep -A 1 \'duck\' src/test/resources/text_for_tests.txt");
+        assertEquals("A duck walked up to a lemonade stand\n" +
+                "And he said to the man, running the stand\n\n", outContent.toString());
+        resetStreams();
+    }
+    @Test
+    public void testGrepFails() throws ExitException, ShellException, ContinueException {
+        shell.processLine("grep pampam");
+        assertEquals("wrong grep options format: wrong number of args, usage:\n" +
+                "\tgrep [-i] [-A numLines] pattern filename\n", outContent.toString());
+        resetStreams();
+        shell.processLine("grep pampam -c src/test/resources/text_for_tests.txt");
+        assertEquals("wrong grep options format: org.apache.commons.cli.UnrecognizedOptionException: " +
+                "Unrecognized option: -c\n", outContent.toString());
+        resetStreams();
+        shell.processLine("grep -w \'grape\' src/test/resources/i_do_no_exists.txt");
+        assertEquals("somethings's wrong with the file\n", outContent.toString());
+        resetStreams();
     }
 
     private void resetStreams() {
