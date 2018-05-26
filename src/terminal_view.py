@@ -22,6 +22,8 @@ class TerminalView:
 					"q : quit"]
 	def __init__(self, stdscr):
 		self.stdscr = stdscr
+		with open("./balloon.txt") as inp:
+			self.balloon_lines = [st.rstrip() for st in inp]
 	def exit(self):
 		curses.endwin()		
 	def draw(self, model): #game_map, metainfo, hero_inventory, lost=False, win=False, crash=False):
@@ -36,18 +38,30 @@ class TerminalView:
 		else:
 			self.stdscr.clear()
 			self.stdscr.addstr(self.metainfo_str(model.metainfo))
-			self.draw_map(model.map)
+			map_lines = self.get_map_lines(model.map)
+			map_lines = self.add_other_elements(map_lines)
+			self.stdscr.addstr('\n'.join(map_lines))
 
 			inventory_lines = ["\t{}. {}".format(i+1, self.item_to_string(item)) for i, item in  enumerate(model.hero_inventory)]
 			if inventory_lines:
 				inventory_lines[model.selected_item] += "  <-- selected"
 			self.stdscr.addstr("\n\ninventory:\n" +'\n'.join(inventory_lines))
 			self.stdscr.refresh()
-	def draw_map(self, game_map):
+	def get_map_lines(self, game_map):
 		map_lines = [''.join(map(self.cell_string, row)) for row in game_map[::-1]]
+		return map_lines
+	def add_other_elements(self, map_lines):
+		map_lines = list(map_lines)
+		if len(map_lines) < len(self.balloon_lines):
+			map_lines += [' ' * len(map_lines[0])] * (len(self.balloon_lines) - len(map_lines))
 		for i in range(len(TerminalView.help_message)):
-			map_lines[3+i] += "\t\t" + TerminalView.help_message[i]
-		self.stdscr.addstr('\n'.join(map_lines))
+			map_lines[3+i] += " " * 10 + TerminalView.help_message[i]
+		max_len = max(map(len, map_lines))
+		for i in range(len(map_lines)):
+			map_lines[i] = map_lines[i].ljust(max_len)
+		for i in range(len(self.balloon_lines)):
+			map_lines[i] += " " * 5 + self.balloon_lines[i]
+		return map_lines
 	def cell_string(self, cell):
 		return TerminalView.cell_to_string[cell.__class__]
 	def metainfo_str(self, metainfo):

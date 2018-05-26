@@ -14,4 +14,7 @@
 # Mac Desktop Service Store
 *DS_Store
 
+# Python byte code files
+*.pyc
+
 target/**
