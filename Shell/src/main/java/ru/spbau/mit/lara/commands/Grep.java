@@ -3,7 +3,6 @@ package ru.spbau.mit.lara.commands;
 import org.apache.commons.cli.*;
 import ru.spbau.mit.lara.exceptions.ExitException;
 import ru.spbau.mit.lara.exceptions.GrepException;
-import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
 import ru.spbau.mit.lara.exceptions.ContinueException;
 
 import java.io.BufferedReader;
@@ -47,7 +46,7 @@ public class Grep implements Command {
             } catch (ParseException e) {
                 throw new GrepException(e);
             }
-            PatternAndStringPair pair = computePattern(tokens, commandLine);
+            PatternAndStringPair pair = computePattern(commandLine);
             pattern = pair.pattern;
             fileNameStr = pair.str;
         } catch (GrepException e) {
@@ -75,7 +74,6 @@ public class Grep implements Command {
                             n--;
                         }
                         br.reset();
-//                        System.out.println(n * 2);
                     }
                 }
                 line = br.readLine();
@@ -88,11 +86,10 @@ public class Grep implements Command {
 
     @Override
     public List<String> pipedExecute(List<String> lines) throws ContinueException {
-        //System.out.println("there's no piped version of grep");
         throw new ContinueException();
     }
 
-    private PatternAndStringPair computePattern(List<String> tokens, CommandLine commandLine) throws GrepException {
+    private PatternAndStringPair computePattern(CommandLine commandLine) throws GrepException {
         String[] args = commandLine.getArgs();
         if (args.length != 2) {
             throw new GrepException("wrong number of args, usage:\n\tgrep [-i] [-A numLines] pattern filename");

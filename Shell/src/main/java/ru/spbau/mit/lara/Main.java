@@ -25,7 +25,7 @@ public class Main {
                     // If the result of processing the line is negative
                     System.out.println("wrong string format =(\n\tplease, try again");
                 } catch (ContinueException e) {
-                    System.out.println("there's no piped version of grep");
+                    System.out.println("something went wrong\n\tplease, try again");
                 } catch (ExitException e) {
                     break;
                 }

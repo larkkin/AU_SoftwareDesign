@@ -104,6 +104,7 @@ public class ShellTest {
         assertEquals("Hey! (Bum bum bum) Got any grapes?\n\n", outContent.toString());
         resetStreams();
     }
+
     @Test
     public void testGrepIgnoreCase() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep -i \'Grapes\' src/test/resources/text_for_tests.txt");
@@ -113,6 +114,7 @@ public class ShellTest {
         assertEquals("\n", outContent.toString());
         resetStreams();
     }
+
     @Test
     public void testGrepWord() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep -w \'grapes\' src/test/resources/text_for_tests.txt");
@@ -122,6 +124,7 @@ public class ShellTest {
         assertEquals("\n", outContent.toString());
         resetStreams();
     }
+
     @Test
     public void testGrepAdded() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep -A 1 \'duck\' src/test/resources/text_for_tests.txt");
@@ -129,6 +132,7 @@ public class ShellTest {
                 "And he said to the man, running the stand\n\n", outContent.toString());
         resetStreams();
     }
+
     @Test
     public void testGrepFails() throws ExitException, ShellException, ContinueException {
         shell.processLine("grep pampam");
