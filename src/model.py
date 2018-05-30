@@ -6,12 +6,12 @@ import os
 from cell import *
 from terminal_view import *
 from controller import *
-from logger import *
 
 cell_types = {'girl', 'cloud', 'bird', 'thundercloud', 'wings', 'jetpack', 'nimbus2000', 'empty'}
 
-class Model:
 
+'''Contains all the game rules and the game data'''
+class Model:
     cell_from_string_dict = {'Y' : Girl,
                              'O' : Cloud,
                              '@' : ThunderCloud,
@@ -23,10 +23,9 @@ class Model:
     '''
     map is a rectangle -- np.matrix of game_objects (cells) 
     '''
-    def __init__(self, base_score=0, level_num=0):
-        stdscr = curses.initscr()
-        self.view = TerminalView(stdscr)
-        self.controller = TerminalController(stdscr)
+    def __init__(self, view, controller, base_score=0, level_num=0):
+        self.view = view
+        self.controller = controller
         self.win = False
         self.lost = False
         self.crash = False
@@ -34,8 +33,6 @@ class Model:
         self.base_score = base_score
         self.score = base_score
         self.level_num = level_num
-        if self.level_num == 0:
-            self.logger = Logger()
 
         self.levels = ["./maps/"+filename for filename in sorted(os.listdir("./maps"))]
         self.hero_position = None
@@ -45,8 +42,6 @@ class Model:
         self.metainfo = {'movepoints left' : Hero.default_movepoints,
                          'current vehicle' : None,
                          'score' : self.score}
-        # self.generate_map(20, 8)
-        # self.read_map_from_file("./Map1")
         Bird.total_birds = 0
         self.read_map_from_file(self.levels[self.level_num])
         self.command_to_direction = {'left':  np.array((0, -1)),
@@ -55,7 +50,8 @@ class Model:
                                      'down':  np.array((-1, 0))}
 
 
-
+    '''A method for a simple map generation. 
+       Currently not in use, since pre-constructed maps are loaded from the file system'''             
     def generate_map(self, height, width):
         self.hero_position = np.array((0, 1))
         self.map = np.array([[Empty() for i in range(width)] for j in range(height)])
@@ -67,39 +63,39 @@ class Model:
         for i in range(1, width - 1):
             if i == 3:
                 continue
-            self.map[height/2, i] = ThunderCloud()
+            self.map[height / 2, i] = ThunderCloud()
         for pos in self.bird_positions:
             self.map[pos[0], pos[1]] = Bird()
         self.map[3, 3] = Wings()
         self.map[2, 5] = Wings()
         self.map[4, 1] = Quadrocopter()
 
+    '''The main method of the class. Waits for a command from the controller in an infinite loop'''
     def run(self):
         self.view.draw(self)
         stop = False
         while not stop:
-            # try:
-            command = self.controller.get_command()
-            stop = self.execute(command)
-            # except BaseException as e:
-            #   self.crashinfo = str(e) + " " + str(e.args)
-            #   self.crash = True
-            #   self.view.draw(self)
-            # except IndexError:
-            #   self.crashinfo = sys.exc_info()[0]
-            #   self.view.draw(self)
+            try:
+                command = self.controller.get_command()
+                stop = self.execute(command)
+            except BaseException as e:
+              self.crashinfo = str(e) + " " + str(e.args)
+              self.crash = True
+              self.view.draw(self)
 
 
 
 
 
-
+    '''A generic method for executing a command, which can be one of the following:
+       exit, change item selection, enable selected item, move character.
+       Returns a boolean that tell the loop in "run" method whether to stop or not.'''
     def execute(self, command):
         if self.end:
             self.exit()
             return True
         if (self.win and self.level_num < (len(self.levels) - 1)):
-            self.__init__(self.score, self.level_num + 1)
+            self.__init__(self.view, self.controller, self.score, self.level_num + 1)
             self.view.draw(self)
             return False
         if self.win:
@@ -127,7 +123,7 @@ class Model:
             if self.hero_inventory:
                 item = self.hero_inventory.pop(self.selected_item)
                 hero = self.get_cell(self.hero_position)
-                hero.enable_vehicle(item, self.logger)
+                hero.enable_vehicle(item)
                 self.metainfo['current vehicle'] = hero.vehicle
                 self.execute('prev item')
             return False
@@ -138,16 +134,15 @@ class Model:
             if bird_pos[0] < 0:
                 continue
             sleep(0.01)
-            bird_direction = (choice(self.command_to_direction.values()))
+            bird_direction = (choice(list(self.command_to_direction.values())))
             self.move(bird_pos, bird_direction)
         return False
 
 
-
+    '''A method that handles moving the character (and, hence, all the NPCs)'''
     def move(self, cell_coordinates, direction):
         cell_1 = self.map[cell_coordinates[0], cell_coordinates[1]]
         if isinstance(cell_1, Hero):
-            # direction *= cell_1.speed
             for i in range(1, cell_1.speed):
                 cell_coordinates_2 = cell_coordinates + direction
                 if cell_coordinates_2[0] >= len(self.map):
@@ -174,14 +169,15 @@ class Model:
             self.unsafe_move(cell_1, cell_coordinates, direction)
         self.view.draw(self)
 
+    '''A part of the "move" method. Can be called only if the movement is possible'''
     def unsafe_move(self, cell_1, cell_coordinates, direction):
         cell_coordinates_2 = cell_coordinates + direction
         cell_2 = self.get_cell(cell_coordinates_2)
         self.clear_position(cell_1)
         self.clear_position(cell_2)
-        cell_1, cell_2 = cell_1.interact(cell_2, self.logger)
-        self.set_sell(cell_coordinates, cell_1)
-        self.set_sell(cell_coordinates_2, cell_2)
+        cell_1, cell_2 = cell_1.interact(cell_2)
+        self.set_cell(cell_coordinates, cell_1)
+        self.set_cell(cell_coordinates_2, cell_2)
         self.update_positions(cell_1, cell_coordinates)
         self.update_positions(cell_2, cell_coordinates_2)
 
@@ -192,12 +188,14 @@ class Model:
 
     def get_cell(self, cell_coordinates):
         return self.map[cell_coordinates[0], cell_coordinates[1]]
-    def set_sell(self, cell_coordinates, cell):
+    def set_cell(self, cell_coordinates, cell):
         self.map[cell_coordinates[0], cell_coordinates[1]] = cell
 
+    '''Removes a bird from the game field'''
     def clear_position(self, cell):
         if isinstance(cell, Bird):
             self.bird_positions[cell.id] = np.array((-1, -1))   
+    '''Updates information that Model keeps about PC or NPC'''
     def update_positions(self, cell, coordinates):
         if isinstance(cell, Hero):
             self.metainfo['movepoints left'] = cell.movepoints
@@ -211,6 +209,7 @@ class Model:
         if isinstance(cell, Bird):
             self.bird_positions[cell.id] = coordinates
     
+    '''A method for reading the game map from a file'''
     def read_map_from_file(self, filename):
         with open(filename) as inp:
             self.map = []
@@ -240,4 +239,3 @@ class Model:
     
     def exit(self):
         self.view.exit()
-        self.logger.exit()

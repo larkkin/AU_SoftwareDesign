@@ -4,7 +4,7 @@ import model
 from cell import *
 import curses
 
-
+'''A view class based on curses module. Draws a map in the console'''
 class TerminalView:
 	cell_to_string = {
 		Hero : 'Y',
@@ -26,7 +26,7 @@ class TerminalView:
 			self.balloon_lines = [st.rstrip() for st in inp]
 	def exit(self):
 		curses.endwin()		
-	def draw(self, model): #game_map, metainfo, hero_inventory, lost=False, win=False, crash=False):
+	def draw(self, model):
 		if model.crash:
 			self.crash(model.metainfo, model.crashinfo)
 		elif model.lost:
@@ -47,15 +47,17 @@ class TerminalView:
 				inventory_lines[model.selected_item] += "  <-- selected"
 			self.stdscr.addstr("\n\ninventory:\n" +'\n'.join(inventory_lines))
 			self.stdscr.refresh()
+	'''Draws the map itself'''
 	def get_map_lines(self, game_map):
 		map_lines = [''.join(map(self.cell_string, row)) for row in game_map[::-1]]
 		return map_lines
+	'''Adds all the auxiliary informarion'''
 	def add_other_elements(self, map_lines):
 		map_lines = list(map_lines)
 		if len(map_lines) < len(self.balloon_lines):
 			map_lines += [' ' * len(map_lines[0])] * (len(self.balloon_lines) - len(map_lines))
 		for i in range(len(TerminalView.help_message)):
-			map_lines[3+i] += " " * 10 + TerminalView.help_message[i]
+			map_lines[3 + i] += " " * 10 + TerminalView.help_message[i]
 		max_len = max(map(len, map_lines))
 		for i in range(len(map_lines)):
 			map_lines[i] = map_lines[i].ljust(max_len)

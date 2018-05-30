@@ -1,9 +1,17 @@
-import model
+from model import *
 
 def main():
-	game_model = model.Model()
-	game_model.run()
+    FORMAT = '%(message)s'
+    logging.basicConfig(filename='log.txt',
+                        level=logging.INFO,
+                        format=FORMAT,
+                        filemode='w')
+    stdscr = curses.initscr()
+    view = TerminalView(stdscr)
+    controller = TerminalController(stdscr)
+    game_model = Model(view, controller)
+    game_model.run()
 
 
 if __name__ == '__main__':
-	main()
+    main()
