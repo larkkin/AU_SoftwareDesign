@@ -11,7 +11,6 @@ public class Ls implements Command {
     @Override
     public String execute(List<String> tokens) throws ExitException {
         if (tokens.size() > 1){
-
             throw new ShellRuntimeException();
         }
         File dir;

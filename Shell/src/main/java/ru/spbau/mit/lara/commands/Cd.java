@@ -9,11 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cd implements Command {
-
+    /*
+     *  Change current dir. Simulate usual cd.
+     *  You shoud
+     */
     @Override
     public String execute(List<String> tokens) throws ExitException {
         if (tokens.size() > 1) {
-            return "to many argument for cd";
+            return "Wrong amount of params";
         }
 
         if (tokens.size() == 0) {
@@ -46,7 +49,7 @@ public class Cd implements Command {
     @Override
     public List<String> pipedExecute(List<String> lines) throws ExitException {
         if (lines.size() > 1) {
-            throw  new ShellRuntimeException();
+            throw new ShellRuntimeException();
         }
 
         if (lines.size() == 0) {

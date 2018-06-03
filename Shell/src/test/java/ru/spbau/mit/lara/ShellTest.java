@@ -127,7 +127,6 @@ public class ShellTest {
     public void testCd() throws Exception
     {
         String root = System.getProperty("user.dir");
-     //   assertEquals("/home/nicolay/AU/sd/AU_SoftwareDesign/Shell\n", outContent.toString());
         shell.processLine("cd /");
         shell.processLine("pwd");
         assertEquals("\n/\n", outContent.toString());

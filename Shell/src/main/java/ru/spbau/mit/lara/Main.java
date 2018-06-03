@@ -25,6 +25,9 @@ public class Main {
                     System.out.println("wrong string format =(\n\tplease, try again");
                 } catch (ExitException e) {
                     break;
+                } catch (RuntimeException e)
+                {
+                    System.out.println("Run-time exception");
                 }
             }
         } catch (IOException e) {}
