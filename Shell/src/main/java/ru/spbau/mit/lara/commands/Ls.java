@@ -1,6 +1,7 @@
 package ru.spbau.mit.lara.commands;
 
 import ru.spbau.mit.lara.exceptions.ExitException;
+import ru.spbau.mit.lara.exceptions.NotFoundFolderException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
 
 import java.io.File;
@@ -8,8 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ls implements Command {
+    /** Displays contains of folder
+     *  has two variants: piped and non-piped, as all the commands do
+     *  Ls shows contain of current directory by default.
+     *  Also you can point out path to folder
+     */
     @Override
-    public String execute(List<String> tokens) throws ExitException {
+    public String execute(List<String> tokens) throws ExitException, NotFoundFolderException {
         if (tokens.size() > 1){
             throw new ShellRuntimeException();
         }
@@ -21,7 +27,7 @@ public class Ls implements Command {
         }
         dir = dir.getAbsoluteFile();
         if (!dir.isDirectory()) {
-            throw new ShellRuntimeException();
+            throw new NotFoundFolderException();
         }
 
         StringBuilder result = new StringBuilder();

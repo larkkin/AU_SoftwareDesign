@@ -1,6 +1,7 @@
 package ru.spbau.mit.lara.commands;
 
 import ru.spbau.mit.lara.exceptions.ExitException;
+import ru.spbau.mit.lara.exceptions.NotFoundFolderException;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface Command {
      * @return single string (containing newline symbols) that
      * should be printed to the stdout or passed along the pipeline
      */
-    String execute(List<String> tokens) throws ExitException;
+    String execute(List<String> tokens) throws ExitException, NotFoundFolderException;
 
     /**
      * A method to execute a non-first command in a pipeline.
@@ -25,6 +26,6 @@ public interface Command {
      * @return same as the execute method but now lines are
      *         stored in the list
      */
-    List<String> pipedExecute(List<String> lines) throws ExitException;
+    List<String> pipedExecute(List<String> lines) throws ExitException, NotFoundFolderException;
 }
 

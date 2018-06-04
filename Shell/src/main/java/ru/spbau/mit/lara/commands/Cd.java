@@ -1,6 +1,7 @@
 package ru.spbau.mit.lara.commands;
 
 import ru.spbau.mit.lara.exceptions.ExitException;
+import ru.spbau.mit.lara.exceptions.NotFoundFolderException;
 import ru.spbau.mit.lara.exceptions.ShellRuntimeException;
 
 import java.io.File;
@@ -9,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cd implements Command {
-    /*
-     *  Change current dir. Simulate usual cd.
-     *  You shoud
+    /** Change current directory
+     *  has two variants: piped and non-piped, as all the commands do
      */
     @Override
-    public String execute(List<String> tokens) throws ExitException {
+    public String execute(List<String> tokens) throws ExitException, NotFoundFolderException {
         if (tokens.size() > 1) {
             return "Wrong amount of params";
         }
@@ -47,7 +47,7 @@ public class Cd implements Command {
     }
 
     @Override
-    public List<String> pipedExecute(List<String> lines) throws ExitException {
+    public List<String> pipedExecute(List<String> lines) throws ExitException, NotFoundFolderException {
         if (lines.size() > 1) {
             throw new ShellRuntimeException();
         }
